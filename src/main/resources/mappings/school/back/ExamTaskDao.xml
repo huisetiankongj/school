@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.ExamTaskDao">
+    
+	<sql id="examTaskColumns">
+		a.id AS "id",
+		a.et_title AS "etTitle",
+		a.et_subject_ids AS "etSubjectIds",
+		a.et_subject_names AS "etSubjectNames",
+		a.et_org_type AS "etOrgType",
+		a.et_org_ids AS "etOrgIds",
+		a.et_org_names AS "etOrgNames",
+		a.create_time AS "createTime",
+		a.create_user AS "createUser",
+		a.update_time AS "updateTime",
+		a.remarks AS "remarks",
+		a.state AS "state",
+		a.update_user AS "updateUser"
+	</sql>
+	
+	<sql id="examTaskJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.ExamTask">
+		SELECT 
+			<include refid="examTaskColumns"/>
+		FROM tb_exam_task a
+			<include refid="examTaskJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.ExamTask">
+		SELECT 
+			<include refid="examTaskColumns"/>
+		FROM tb_exam_task a
+			<include refid="examTaskJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.ExamTask">
+		SELECT 
+			<include refid="examTaskColumns"/>
+		FROM tb_exam_task a
+			<include refid="examTaskJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_exam_task(
+			id,
+			et_title,
+			et_subject_ids,
+			et_subject_names,
+			et_org_type,
+			et_org_ids,
+			et_org_names,
+			create_time,
+			create_user,
+			update_time,
+			remarks,
+			state,
+			update_user
+		) VALUES (
+			#{id},
+			#{etTitle},
+			#{etSubjectIds},
+			#{etSubjectNames},
+			#{etOrgType},
+			#{etOrgIds},
+			#{etOrgNames},
+			#{createTime},
+			#{createUser},
+			#{updateTime},
+			#{remarks},
+			#{state},
+			#{updateUser}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tb_exam_task 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="etTitle != null and etTitle != ''">
+				et_title = #{etTitle},
+			</if>
+			<if test="etSubjectIds != null and etSubjectIds != ''">
+				et_subject_ids = #{etSubjectIds},
+			</if>
+			<if test="etSubjectNames != null and etSubjectNames != ''">
+				et_subject_names = #{etSubjectNames},
+			</if>
+			<if test="etOrgType != null and etOrgType != ''">
+				et_org_type = #{etOrgType},
+			</if>
+			<if test="etOrgIds != null and etOrgIds != ''">
+				et_org_ids = #{etOrgIds},
+			</if>
+			<if test="etOrgNames != null and etOrgNames != ''">
+				et_org_names = #{etOrgNames},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				create_time = #{createTime},
+			</if>
+			<if test="createUser != null and createUser != ''">
+				create_user = #{createUser},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
+			</if>
+			<if test="state != null and state != ''">
+				state = #{state},
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				update_user = #{updateUser},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_exam_task
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	
+</mapper>

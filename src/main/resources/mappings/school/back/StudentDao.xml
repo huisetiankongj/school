@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.StudentDao">
+    
+	<sql id="studentColumns">
+		a.id AS "id",
+		a.stu_org_id AS "stuOrgId",
+		a.stu_name AS "stuName",
+		a.stu_no AS "stuNo",
+		a.stu_sex AS "stuSex",
+		a.stu_age AS "stuAge",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime",
+		a.state AS "state",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="studentJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.Student">
+		SELECT 
+			<include refid="studentColumns"/>
+		FROM tb_student a
+			<include refid="studentJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.Student">
+		SELECT 
+			<include refid="studentColumns"/>
+		FROM tb_student a
+			<include refid="studentJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.Student">
+		SELECT 
+			<include refid="studentColumns"/>
+		FROM tb_student a
+			<include refid="studentJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_student(
+			id,
+			stu_org_id,
+			stu_name,
+			stu_no,
+			stu_sex,
+			stu_age,
+			create_time,
+			update_time,
+			state,
+			remarks
+		) VALUES (
+			#{id},
+			#{stuOrgId},
+			#{stuName},
+			#{stuNo},
+			#{stuSex},
+			#{stuAge},
+			#{createTime},
+			#{updateTime},
+			#{state},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tb_student 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="stuOrgId != null and stuOrgId != ''">
+				stu_org_id = #{stuOrgId},
+			</if>
+			<if test="stuName != null and stuName != ''">
+				stu_name = #{stuName},
+			</if>
+			<if test="stuNo != null and stuNo != ''">
+				stu_no = #{stuNo},
+			</if>
+			<if test="stuSex != null and stuSex != ''">
+				stu_sex = #{stuSex},
+			</if>
+			<if test="stuAge != null and stuAge != ''">
+				stu_age = #{stuAge},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="state != null and state != ''">
+				state = #{state},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_student
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	
+</mapper>

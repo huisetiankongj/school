@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.StudentAchievementDao">
+    
+	<sql id="studentAchievementColumns">
+		a.id AS "id",
+		a.task_id AS "taskId",
+		a.stu_id AS "stuId",
+		a.subject_id AS "subjectId",
+		a.org_id AS "orgId",
+		a.org_name AS "orgName",
+		a.score AS "score",
+		a.create_time AS "createTime",
+		a.create_user AS "createUser",
+		a.update_time AS "updateTime",
+		a.update_user AS "updateUser"
+	</sql>
+	
+	<sql id="studentAchievementJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.StudentAchievement">
+		SELECT 
+			<include refid="studentAchievementColumns"/>
+		FROM tb_student_achievement a
+			<include refid="studentAchievementJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.StudentAchievement">
+		SELECT 
+			<include refid="studentAchievementColumns"/>
+		FROM tb_student_achievement a
+			<include refid="studentAchievementJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.StudentAchievement">
+		SELECT 
+			<include refid="studentAchievementColumns"/>
+		FROM tb_student_achievement a
+			<include refid="studentAchievementJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_student_achievement(
+			id,
+			task_id,
+			stu_id,
+			subject_id,
+			org_id,
+			org_name,
+			score,
+			create_time,
+			create_user,
+			update_time,
+			update_user
+		) VALUES (
+			#{id},
+			#{taskId},
+			#{stuId},
+			#{subjectId},
+			#{orgId},
+			#{orgName},
+			#{score},
+			#{createTime},
+			#{createUser},
+			#{updateTime},
+			#{updateUser}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tb_student_achievement 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId},
+			</if>
+			<if test="stuId != null and stuId != ''">
+				stu_id = #{stuId},
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				subject_id = #{subjectId},
+			</if>
+			<if test="orgId != null and orgId != ''">
+				org_id = #{orgId},
+			</if>
+			<if test="orgName != null and orgName != ''">
+				org_name = #{orgName},
+			</if>
+			<if test="score != null and score != ''">
+				score = #{score},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				create_time = #{createTime},
+			</if>
+			<if test="createUser != null and createUser != ''">
+				create_user = #{createUser},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				update_user = #{updateUser},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_student_achievement
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.ExamTaskDetailDao">
+    
+	<sql id="examTaskDetailColumns">
+		a.id AS "id",
+		a.task_id AS "taskId",
+		a.org_id AS "orgId"
+	</sql>
+	
+	<sql id="examTaskDetailJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.ExamTaskDetail">
+		SELECT 
+			<include refid="examTaskDetailColumns"/>
+		FROM tb_exam_task_detail a
+			<include refid="examTaskDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.ExamTaskDetail">
+		SELECT 
+			<include refid="examTaskDetailColumns"/>
+		FROM tb_exam_task_detail a
+			<include refid="examTaskDetailJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.ExamTaskDetail">
+		SELECT 
+			<include refid="examTaskDetailColumns"/>
+		FROM tb_exam_task_detail a
+			<include refid="examTaskDetailJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_exam_task_detail(
+			id,
+			task_id,
+			org_id
+		) VALUES (
+			#{id},
+			#{taskId},
+			#{orgId}
+		)
+	</insert>
+	<insert id="batchSave">
+		INSERT INTO tb_exam_task_detail(
+			id,
+			task_id,
+			org_id
+		) VALUES
+		<foreach collection ="list" item="item" index= "index" separator =",">
+			(
+			#{item.id},
+			#{item.taskId},
+			#{item.orgId}
+			)
+		</foreach >
+	</insert>
+	<update id="update">
+		UPDATE tb_exam_task_detail 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId},
+			</if>
+			<if test="orgId != null and orgId != ''">
+				org_id = #{orgId},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_exam_task_detail
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	<update id="deleteByTaskId">
+		DELETE FROM tb_exam_task_detail
+		WHERE task_id = #{taskId}
+	</update>
+
+</mapper>

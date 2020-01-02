@@ -5,37 +5,30 @@
 	<form id="studentAchievementForm" name="studentAchievementForm" action="javascript:void(0);" class="form form-horizontal">
 	   <input type="hidden"  name="id" value="${studentAchievement.id}" />	
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">任务id：</label>
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">任务：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="taskId" value="${studentAchievement.taskId}" placeholder="请输入任务id" datatype="*" class="form-control input-text"/>
+			    <input type="text" name="taskName" value="${studentAchievement.taskName}" class="form-control input-text" readonly/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学生id：</label>
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学生：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="stuId" value="${studentAchievement.stuId}" placeholder="请输入学生id" datatype="*" class="form-control input-text"/>
+			    <input type="text" name="stuName" value="${studentAchievement.stuName}" datatype="*" class="form-control input-text" readonly/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学科id：</label>
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学科：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="subjectId" value="${studentAchievement.subjectId}" placeholder="请输入学科id" datatype="*" class="form-control input-text"/>
+			    <input type="text" name="subjectName" value="${studentAchievement.subjectName}" placeholder="请输入学科id" class="form-control input-text" readonly/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">班级id：</label>
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">班级：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="orgId" value="${studentAchievement.orgId}" placeholder="请输入班级id" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">班级名称：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="orgName" value="${studentAchievement.orgName}" placeholder="请输入班级名称" datatype="*" class="form-control input-text"/>
+			    <input type="text" name="orgName" value="${studentAchievement.orgName}" placeholder="请输入班级id" class="form-control input-text" readonly/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
@@ -43,38 +36,6 @@
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">成绩：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
 			    <input type="text" name="score" value="${studentAchievement.score}" placeholder="请输入成绩" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${studentAchievement.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建人：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="createUser" value="${studentAchievement.createUser}" placeholder="请输入创建人" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">修改时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${studentAchievement.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建人：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="updateUser" value="${studentAchievement.updateUser}" placeholder="请输入创建人" datatype="*" class="form-control input-text"/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>

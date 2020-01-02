@@ -7,67 +7,54 @@
 		<div class="form-group normal-form">
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试标题：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etTitle" value="${examTask.etTitle}" placeholder="请输入考试标题" datatype="*" class="form-control input-text"/>
+			    <input type="text" name="etTitle" value="${examTask.etTitle}" placeholder="请输入考试标题" datatype="*1-100" class="form-control input-text"/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试学科ids：</label>
+			<label class="col-xs-12 col-sm-2 control-label pl-0 pr-5">考试类型：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etSubjectIds" value="${examTask.etSubjectIds}" placeholder="请输入考试学科ids" datatype="*" class="form-control input-text"/>
+				<select name="type" class="form-control select2" datatype="*" nullmsg="考试类型不能为空！">
+					<c:forEach items="${fns:getDictList('tb_task_type')}" var="dict">
+						<option value="${dict.value }" <c:if test="${dict.value == examTask.type}"> selected</c:if>>${dict.label }</option>
+					</c:forEach>
+				</select>
+			</div>
+			<div class="col-xs-12 col-sm-3 valid-msg"></div>
+		</div>
+		<div class="form-group normal-form" id="joinMemberCardIds-wrap">
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试学科：</label>
+			<div class="col-xs-12 col-sm-8 pl-0">
+				<input type="hidden" id="etSubjectIds" value="${examTask.etSubjectIds}">
+				<div class="checkbox checkbox-inline">
+					<input type="checkbox" name="etSubjectIds" id="etSubjectIds0" value="0" datatype="*1-500" nullmsg="学科不能为空"/>
+					<label for="etSubjectIds0">所有</label>
+				</div>
+				<c:forEach items="${fns:getDictList('tb_subject_type')}" var="dict" varStatus="status">
+					<div class="checkbox checkbox-inline">
+						<input type="checkbox" name="etSubjectIds" id="etSubjectIds${dict.value }" value="${dict.value }" datatype="*1-500" nullmsg="学科不能为空"/>
+						<label for="etSubjectIds${dict.value }">${dict.label }</label>
+					</div>
+				</c:forEach>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试学科names：</label>
+			<label class="col-xs-12 col-sm-2 control-label pl-0 pr-5">范围类型：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etSubjectNames" value="${examTask.etSubjectNames}" placeholder="请输入考试学科names" datatype="*" class="form-control input-text"/>
+				<select name="etOrgType" class="form-control select2" datatype="*" nullmsg="考试类型不能为空！">
+					<c:forEach items="${fns:getDictList('tb_exam_type')}" var="dict">
+						<option value="${dict.value }" <c:if test="${dict.value == examTask.etOrgType}"> selected</c:if>>${dict.label }</option>
+					</c:forEach>
+				</select>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
 		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试类型（1所有2年级3班级）：</label>
+			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试班级：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etOrgType" value="${examTask.etOrgType}" placeholder="请输入考试类型（1所有2年级3班级）" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试班级ids：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etOrgIds" value="${examTask.etOrgIds}" placeholder="请输入考试班级ids" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">考试班级names：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="etOrgNames" value="${examTask.etOrgNames}" placeholder="请输入考试班级names" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${examTask.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建人：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="createUser" value="${examTask.createUser}" placeholder="请输入创建人" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">修改时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${examTask.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+				<sys:treeselect id="orgForm" name="etOrgIds" value="${examTask.etOrgIds}" datatype="*1-50" nullmsg="班级不能为空！" labelName="etOrgNames" labelValue="${examTask.etOrgNames}"
+								title="班级" url="/sys/org/treeData?type=2" cssClass="required" notAllowSelectParent="true" checked="true"/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
@@ -75,20 +62,6 @@
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">备注：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
 		          <textarea class="form-control"  name="remarks" style="height:100px;">${examTask.remarks}</textarea>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">状态：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="state" value="${examTask.state}" placeholder="请输入状态" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建人：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="updateUser" value="${examTask.updateUser}" placeholder="请输入创建人" datatype="*" class="form-control input-text"/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
@@ -105,12 +78,25 @@
 		</div>
 	<script type="text/javascript">
 		$(function(){
-			examTaskSvc = {
+			var examTaskSvc = {
 				url: {
 					saveExamTask : rootPath + "/back/examTask/save?t="+new Date().getTime()
 				},
 				fnCommit: function(){
 					var saveJson = Svc.formToJson($("#examTaskForm"));
+					if($("#etSubjectIds0").is(':checked')){
+						saveJson.etSubjectIds = '0';
+						saveJson.etSubjectNames = '所有';
+					}else{
+						var ids = [], vals = [];
+						$("input[name='etSubjectIds']:checked").each(function(i,v){
+							var that = $(this), $label = that.parent().find("label");
+							ids.push(that.val());
+							vals.push($label.text());
+						})
+						saveJson.etSubjectIds = ids.join(',');
+						saveJson.etSubjectNames = vals.join(',');
+					}
 		        	Svc.AjaxJson.post(examTaskSvc.url.saveExamTask,saveJson,function(response){
 		        		if(response == true){
 		        			layer.alert('保存成功！',function(index){
@@ -128,11 +114,30 @@
 					});
 					// 保存按钮
 					$('#formSaveBtn').click(function(){
-						examTaskSvc.fnCommit();
+						if(validate.check()){
+							examTaskSvc.fnCommit();
+						}
 				    });
 				}
 			};
+			// 表单验证
+			var validate = $("#examTaskForm").Validform({
+				ignoreHidden:true,
+				tiptype: function (msg, o, cssctl) {
+					var objtip = $(o.obj).closest(".form-group").children(".valid-msg");
+					cssctl(objtip, o.type);
+					objtip.text(msg);
+				},
+			});
 			examTaskSvc.fnRegisterEvent();
+			if($("#etSubjectIds").val()){
+				var etSubjectIds = $("#etSubjectIds").val().replace(/[\[\]]/g,"");
+				$.each(etSubjectIds.split(','),function(i,v){
+					$('#etSubjectIds'+$.trim(v)).prop('checked',true);
+				});
+			}else{
+				$('#etSubjectIds0').prop('checked',true);
+			}
 		});
 	</script>
 </body>

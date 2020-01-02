@@ -5,18 +5,25 @@
 	<sql id="studentAchievementColumns">
 		a.id AS "id",
 		a.task_id AS "taskId",
-		a.stu_id AS "stuId",
+		a.task_name AS "taskName",
+		a.stu_no AS "stuNo",
+		a.stu_name as "stuName",
 		a.subject_id AS "subjectId",
+		a.subject_name AS "subjectName",
 		a.org_id AS "orgId",
 		a.org_name AS "orgName",
 		a.score AS "score",
 		a.create_time AS "createTime",
-		a.create_user AS "createUser",
+		a.create_user_id AS "createUserId",
+		a.create_user_name AS "createUserName",
 		a.update_time AS "updateTime",
-		a.update_user AS "updateUser"
+		a.update_user_id AS "updateUserId",
+		a.update_user_name AS "updateUserName",
+		a.school_org_id as "schoolOrgId"
 	</sql>
 	
 	<sql id="studentAchievementJoins">
+		inner join ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.sys_org o ON o.id = a.org_id
 	</sql>
     
 	<select id="get" resultType="com.it313.elm.school.back.entity.StudentAchievement">
@@ -33,7 +40,28 @@
 		FROM tb_student_achievement a
 			<include refid="studentAchievementJoins"/>
 		<where>
-			
+			1=1
+			<if test="orgId != null and orgId!=''">
+				AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{orgId})
+			</if>
+			<if test="taskId != null and taskId!=''">
+			and a.task_id = #{taskId}
+			</if>
+			<if test="subjectId != null and subjectId!=''">
+				and a.subject_id = #{subjectId}
+			</if>
+			<if test="schoolOrgId != null and schoolOrgId!=''">
+				and a.school_org_id = #{schoolOrgId}
+			</if>
+			<if test="stuName != null and stuName!=''">
+				AND a.stu_name like concat('%',#{stuName},'%')
+			</if>
+			<if test="beginScore != null">
+				AND a.score &gt;=#{beginScore}
+			</if>
+			<if test="endScore != null">
+				AND a.score &lt;=#{endScore}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -65,7 +93,7 @@
 		INSERT INTO tb_student_achievement(
 			id,
 			task_id,
-			stu_id,
+			stu_no,
 			subject_id,
 			org_id,
 			org_name,
@@ -77,7 +105,7 @@
 		) VALUES (
 			#{id},
 			#{taskId},
-			#{stuId},
+			#{stuNo},
 			#{subjectId},
 			#{orgId},
 			#{orgName},
@@ -88,41 +116,61 @@
 			#{updateUser}
 		)
 	</insert>
-	
+	<insert id="batchSave">
+		INSERT INTO tb_student_achievement(
+			id,
+			task_id,
+			task_name,
+			stu_no,
+			stu_name,
+			subject_id,
+			subject_name,
+			org_id,
+			org_name,
+			score,
+			create_time,
+			create_user_id,
+			create_user_name,
+			update_time,
+			update_user_id,
+			update_user_name,
+			school_org_id
+		) VALUES
+		<foreach collection ="list" item="item" index= "index" separator =",">
+			(
+			#{item.id},
+			#{item.taskId},
+			#{item.taskName},
+			#{item.stuNo},
+			#{item.stuName},
+			#{item.subjectId},
+			#{item.subjectName},
+			#{item.orgId},
+			#{item.orgName},
+			#{item.score},
+			now(),
+			#{item.createUserId},
+			#{item.createUserName},
+			now(),
+			#{item.updateUserId},
+			#{item.updateUserName},
+			#{item.schoolOrgId}
+			)
+		</foreach >
+	</insert>
+
+	<update id="updateScore">
+		UPDATE tb_student_achievement
+			set score = #{score},
+			update_time = now(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		where task_id = #{taskId} and subject_id = #{subjectId} and org_id = #{orgId} and stu_no = #{stuNo}
+	</update>
 	<update id="update">
-		UPDATE tb_student_achievement 	
-			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
-			<if test="taskId != null and taskId != ''">
-				task_id = #{taskId},
-			</if>
-			<if test="stuId != null and stuId != ''">
-				stu_id = #{stuId},
-			</if>
-			<if test="subjectId != null and subjectId != ''">
-				subject_id = #{subjectId},
-			</if>
-			<if test="orgId != null and orgId != ''">
-				org_id = #{orgId},
-			</if>
-			<if test="orgName != null and orgName != ''">
-				org_name = #{orgName},
-			</if>
-			<if test="score != null and score != ''">
-				score = #{score},
-			</if>
-			<if test="createTime != null and createTime != ''">
-				create_time = #{createTime},
-			</if>
-			<if test="createUser != null and createUser != ''">
-				create_user = #{createUser},
-			</if>
-			<if test="updateTime != null and updateTime != ''">
-				update_time = #{updateTime},
-			</if>
-			<if test="updateUser != null and updateUser != ''">
-				update_user = #{updateUser},
-			</if>
-			</trim>
+		UPDATE tb_student_achievement
+		set score = #{score}
+		where id = #{id}
 	</update>
 	
 	<update id="batchDelete">
@@ -133,5 +181,53 @@
 	    </foreach>  
 	    )
 	</update>
-	
+
+	<select id="importModuleData" resultType="com.it313.elm.school.back.entity.StudentAchievement">
+		SELECT
+		a.id AS "id",
+		a.task_id AS "taskId",
+		b.stu_no AS "stuNo",
+		a.subject_id AS "subjectId",
+		a.org_id AS "orgId",
+		a.org_name AS "orgName",
+		a.score AS "score",
+		b.stu_name
+		FROM tb_student b
+		left join tb_student_achievement a on a.stu_no = b.stu_no and b.stu_org_id = a.org_id and task_id =#{taskId} and a.subject_id = #{subjectId}
+		where b.stu_org_id = #{orgId}
+		order by b.stu_no
+	</select>
+
+	<select id="allSubjectAchievement" resultType="java.util.Map">
+		SELECT
+		a.id AS "id",
+		a.task_id AS "taskId",
+		b.stu_no AS "stuNo",
+		a.subject_id AS "subjectId",
+		b.stu_name as "stuName",
+		c.name as "stuOrgName",
+		GROUP_CONCAT(CONCAT('subject',subject_id,':',a.score)) as subjectScore
+		FROM tb_student_achievement a
+		inner join tb_student b on a.stu_no = b.stu_no and b.stu_org_id = a.org_id
+		inner join ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.sys_org c on c.id = a.org_id
+		where a.task_id =#{taskId}
+		<if test="orgId != null and orgId!=''">
+			AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{orgId})
+		</if>
+		group by b.stu_no order by a.create_time
+	</select>
+
+	<select id="allSubjectAchievementCount" resultType="java.lang.Integer">
+		select case count(1) when null then 0 else count(1) end
+		from (
+		SELECT
+		a.id
+		FROM tb_student_achievement a
+		where a.task_id =#{taskId}
+		<if test="orgId != null and orgId!=''">
+			AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{orgId})
+		</if>
+		group by a.stu_no) t
+	</select>
+
 </mapper>

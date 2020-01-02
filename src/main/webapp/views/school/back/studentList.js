@@ -3,7 +3,8 @@ $(function() {
 			url: {
 				findStudentList: rootPath + "/back/student/list?t="+new Date().getTime(),
 				findStudentForm: rootPath + "/back/student/form?t="+new Date().getTime(),
-				findStudentdelete: rootPath + "/back/student/delete?t="+new Date().getTime()
+				findStudentdelete: rootPath + "/back/student/delete?t="+new Date().getTime(),
+				import: rootPath + "/back/student/importPage?t="+new Date().getTime()
 			},
 			fnSave: function(){
 				studentSvc.fnchange('创建信息');
@@ -39,9 +40,22 @@ $(function() {
 				//搜索按钮
 				$("#searchBtn").click(function(){
 					var params = Svc.formToJson($("#studentSearchForm"));
+					console.log(params);
 					studentTable.reDrawParams = params;
 					studentTable.fnDraw();
 				});
+
+				//导入按钮
+				$("#importBtn").click(function(){
+					API.fnShowForm({
+						id: 'studentImportForm',
+						url: studentSvc.url.import,
+						title: "批量导入",
+						area: ['500px', '400px'],
+						zIndex: 200,
+						params: {stuOrgId:""}
+					});
+				})
 			}
 	}
 	//---------------------------------------列表------------------------------------------------
@@ -53,12 +67,7 @@ $(function() {
 	    },
 		aoColumnDefs: [
 				{ aTargets: [0], mData: "id", sClass: "text-center", sTitle: "<input type='checkbox' class='TableCheckall'>",bSortable: false, sWidth: "20px"},
-				 { aTargets: [1], mDataProp: "stuOrgId", sTitle: "学生班级", mRender: function(v){
-				      if(v)
-							return '<a class="Item-Detail" href="javascript:;">'+v+'</a>';
-						else
-							return '<a class="Item-Detail" href="javascript:;">--</a>';
-					}},
+				 { aTargets: [1], mDataProp: "stuOrgName", sTitle: "学生班级"},
 				 { aTargets: [2], mDataProp: "stuName", sTitle: "学生姓名", mRender: function(v){
 						return v||'-';
 					}},
@@ -66,7 +75,7 @@ $(function() {
 						return v||'-';
 					}},
 				 { aTargets: [4], mDataProp: "stuSex", sTitle: "学生性别", mRender: function(v){
-						return v||'-';
+						return v==1?'男':'女';
 					}},
 				 { aTargets: [5], mDataProp: "stuAge", sTitle: "学生年龄", mRender: function(v){
 						return v||'-';
@@ -74,16 +83,10 @@ $(function() {
 				 { aTargets: [6], mDataProp: "createTime", sTitle: "创建时间", mRender: function(v){
 						return v||'-';
 					}},
-				 { aTargets: [7], mDataProp: "updateTime", sTitle: "修改时间", mRender: function(v){
-						return v||'-';
+				 { aTargets: [7], mDataProp: "state", sTitle: "状态", mRender: function(v){
+						return v==1?"正常":'禁用';
 					}},
-				 { aTargets: [8], mDataProp: "state", sTitle: "状态", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [9], mDataProp: "remarks", sTitle: "备注", mRender: function(v){
-						return v||'-';
-					}},
-				{ aTargets: [10], sClass: "opperColumn", sTitle: "操作", mData: function(data){
+				{ aTargets: [8], sClass: "opperColumn", sTitle: "操作", mData: function(data){
 					var buttons = [];
 					$.each(studentTable.permission,function(i,perm){
 						switch(perm){
@@ -103,6 +106,7 @@ $(function() {
 					switch(perm){
 					case 'back:student:edit':
 					case 'permission:all':
+						$('#addStudent,#batchDeleteStudent').removeClass('hide');
 					     //新增信息
 					  $('#addStudent').click(function(){
 						  studentSvc.fnSave();
@@ -140,6 +144,34 @@ $(function() {
 				});
 			}
 		});
+	//---------------------------------------左侧组织机构树------------------------------------------------
+	var organTree;
+	function fnTreeClick(event, treeId, treeNode){
+		$("#stuOrgId").val(treeNode.id);
+		$("#searchBtn").trigger('click');
+	};
+	var treeSetting= {
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		callback: {
+			onClick: fnTreeClick,
+		}
+	};
+	function fnReloadTree(callback){
+		Svc.AjaxForm.get($("#organTreeUl").attr("data-url"),{},function(data){
+			data.splice(0, 0, {id: "allcontent",pId: 0, name: "全部", add: true });
+			try {
+				organTree.destroy();
+			} catch (e) {
+			}
+			organTree = $.fn.zTree.init($("#organTreeUl"), treeSetting, data);
+			callback && callback();
+		});
+	};
 	//---------------------------------------界面初始化------------------------------------------------
+	fnReloadTree();
 	studentSvc.fnRegisterEvent();
 });

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.StandardSettingDao">
+    
+	<sql id="standardSettingColumns">
+		a.id AS "id",
+		a.org_id AS "orgId",
+		a.subject_id AS "subjectId",
+		a.pass_score AS "passScore",
+		a.excellent_score AS "excellentScore",
+		a.level_contrast as "levelContrast"
+	</sql>
+	
+	<sql id="standardSettingJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.StandardSetting">
+		SELECT 
+			<include refid="standardSettingColumns"/>
+		FROM tb_standard_setting a
+			<include refid="standardSettingJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByOrgId" resultType="com.it313.elm.school.back.entity.StandardSetting">
+		SELECT
+		<include refid="standardSettingColumns"/>
+		FROM tb_standard_setting a
+		<include refid="standardSettingJoins"/>
+		WHERE a.org_id = #{orgId}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.StandardSetting">
+		SELECT 
+			<include refid="standardSettingColumns"/>
+		FROM tb_standard_setting a
+			<include refid="standardSettingJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.StandardSetting">
+		SELECT 
+			<include refid="standardSettingColumns"/>
+		FROM tb_standard_setting a
+			<include refid="standardSettingJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_standard_setting(
+			id,
+			org_id,
+			subject_id,
+			pass_score,
+			excellent_score
+		) VALUES (
+			#{id},
+			#{orgId},
+			#{subjectId},
+			#{passScore},
+			#{excellentScore}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tb_standard_setting 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="orgId != null and orgId != ''">
+				org_id = #{orgId},
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				subject_id = #{subjectId},
+			</if>
+			<if test="passScore != null and passScore != ''">
+				pass_score = #{passScore},
+			</if>
+			<if test="excellentScore != null and excellentScore != ''">
+				excellent_score = #{excellentScore},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_standard_setting
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	
+</mapper>

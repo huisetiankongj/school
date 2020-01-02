@@ -5,6 +5,7 @@
 	<sql id="studentColumns">
 		a.id AS "id",
 		a.stu_org_id AS "stuOrgId",
+		o.name as "stuOrgName",
 		a.stu_name AS "stuName",
 		a.stu_no AS "stuNo",
 		a.stu_sex AS "stuSex",
@@ -12,10 +13,12 @@
 		a.create_time AS "createTime",
 		a.update_time AS "updateTime",
 		a.state AS "state",
-		a.remarks AS "remarks"
+		a.remarks AS "remarks",
+		a.school_org_id as "schoolOrgId"
 	</sql>
 	
 	<sql id="studentJoins">
+		inner join ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.sys_org o ON o.id = a.stu_org_id
 	</sql>
     
 	<select id="get" resultType="com.it313.elm.school.back.entity.Student">
@@ -32,7 +35,16 @@
 		FROM tb_student a
 			<include refid="studentJoins"/>
 		<where>
-			
+			1=1
+			<if test="stuOrgId != null and stuOrgId!=''">
+				AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{stuOrgId})
+			</if>
+			<if test="stuName != null and stuName!=''">
+				AND (a.stu_name like concat('%',#{stuName},'%')
+						or
+					a.stu_no like concat('%',#{stuNo},'%')
+					)
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -41,8 +53,28 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		${sqlMap.dsf}
 	</select>
-	
+
+	<select id="findSchoolList" resultType="com.it313.elm.school.back.entity.Student">
+		SELECT
+			a.id AS "id",
+			a.stu_org_id AS "stuOrgId",
+			a.stu_name AS "stuName",
+			a.stu_no AS "stuNo",
+			a.stu_sex AS "stuSex",
+			a.stu_age AS "stuAge",
+			a.create_time AS "createTime",
+			a.update_time AS "updateTime",
+			a.state AS "state",
+			a.remarks AS "remarks"
+		FROM tb_student a
+		<include refid="studentJoins"/>
+		<where>
+			AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{stuOrgId})
+		</where>
+	</select>
+
 	<select id="findAllList" resultType="com.it313.elm.school.back.entity.Student">
 		SELECT 
 			<include refid="studentColumns"/>
@@ -71,7 +103,8 @@
 			create_time,
 			update_time,
 			state,
-			remarks
+			remarks,
+			school_org_id
 		) VALUES (
 			#{id},
 			#{stuOrgId},
@@ -82,10 +115,40 @@
 			#{createTime},
 			#{updateTime},
 			#{state},
-			#{remarks}
+			#{remarks},
+			#{schoolOrgId}
 		)
 	</insert>
-	
+
+	<insert id="batchSave">
+		INSERT INTO tb_student(
+			id,
+			stu_org_id,
+			stu_name,
+			stu_no,
+			stu_sex,
+			stu_age,
+			create_time,
+			state,
+			remarks,
+			school_org_id
+		) VALUES
+		<foreach collection ="list" item="item" index= "index" separator =",">
+			(
+			#{item.id},
+			#{item.stuOrgId},
+			#{item.stuName},
+			#{item.stuNo},
+			#{item.stuSex},
+			#{item.stuAge},
+			now(),
+			1,
+			#{item.remarks},
+			#{item.schoolOrgId}
+			)
+		</foreach >
+	</insert>
+
 	<update id="update">
 		UPDATE tb_student 	
 			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
@@ -127,5 +190,42 @@
 	    </foreach>  
 	    )
 	</update>
+
+	<!-- temp表sql -->
+	<update id="createTable">
+		CREATE TABLE .tb_student_${orgId} (
+		  `stu_no` varchar(30) DEFAULT null
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	<insert id="batchSaveTemp">
+		INSERT INTO tb_student_${orgId}(
+		stu_no
+		) VALUES
+		<foreach collection ="list" item="item" index= "index" separator =",">
+			(
+			#{item.stuNo}
+			)
+		</foreach >
+	</insert>
+	<update id="dropTable">
+		DROP TABLE IF EXISTS tb_student_${orgId}
+	</update>
+
+	<select id="findHasStuNo" resultType="com.it313.elm.school.back.entity.Student">
+		SELECT
+			b.id,a.stu_no as "stuNo"
+		FROM tb_student_${orgId} a
+		inner join tb_student b on a.stu_no = b.stu_no
+		where b.stu_org_id=#{orgId}
+	</select>
+
+	<select id="findMulStuNo" resultType="java.lang.String">
+		select stu_no as "stuNo" from
+			(SELECT
+				stu_no,count(1) as "num"
+			FROM tb_student_${orgId} a where stu_no is not null
+			group by stu_no) t
+		where t.num>1
+	</select>
 	
 </mapper>

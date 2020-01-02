@@ -3,7 +3,8 @@ $(function() {
 			url: {
 				findStudentAchievementList: rootPath + "/back/studentAchievement/list?t="+new Date().getTime(),
 				findStudentAchievementForm: rootPath + "/back/studentAchievement/form?t="+new Date().getTime(),
-				findStudentAchievementdelete: rootPath + "/back/studentAchievement/delete?t="+new Date().getTime()
+				findStudentAchievementdelete: rootPath + "/back/studentAchievement/delete?t="+new Date().getTime(),
+				import: rootPath + "/back/studentAchievement/importPage?t="+new Date().getTime()
 			},
 			fnSave: function(){
 				studentAchievementSvc.fnchange('创建信息');
@@ -13,7 +14,6 @@ $(function() {
 				studentAchievementSvc.fnchange('查看信息',info);
 			},
 			fnUpdate: function(info){
-				
 				studentAchievementSvc.fnchange('修改信息',info);
 			},
 			fnDelete: function(studentAchievements){
@@ -42,6 +42,17 @@ $(function() {
 					studentAchievementTable.reDrawParams = params;
 					studentAchievementTable.fnDraw();
 				});
+				//导入按钮
+				$("#importBtn").click(function(){
+					API.fnShowForm({
+						id: 'studentAchImportForm',
+						url: studentAchievementSvc.url.import,
+						title: "批量导入",
+						area: ['560px', '500px'],
+						zIndex: 200,
+						params: {stuOrgId:""}
+					});
+				})
 			}
 	}
 	//---------------------------------------列表------------------------------------------------
@@ -53,40 +64,21 @@ $(function() {
 	    },
 		aoColumnDefs: [
 				{ aTargets: [0], mData: "id", sClass: "text-center", sTitle: "<input type='checkbox' class='TableCheckall'>",bSortable: false, sWidth: "20px"},
-				 { aTargets: [1], mDataProp: "taskId", sTitle: "任务id", mRender: function(v){
-				      if(v)
-							return '<a class="Item-Detail" href="javascript:;">'+v+'</a>';
-						else
-							return '<a class="Item-Detail" href="javascript:;">--</a>';
-					}},
-				 { aTargets: [2], mDataProp: "stuId", sTitle: "学生id", mRender: function(v){
+				{ aTargets: [1], mDataProp: "taskName", sTitle: "任务"},
+				{ aTargets: [2], mDataProp: "orgName", sTitle: "班级名称", mRender: function(v){
+						return v||'-';
+				}},
+				{ aTargets: [3], mDataProp: "subjectName", sTitle: "学科", mRender: function(v){
+					return v||'-';
+				}},
+				 { aTargets: [4], mDataProp: "stuName", sTitle: "学生", mRender: function(v){
 						return v||'-';
 					}},
-				 { aTargets: [3], mDataProp: "subjectId", sTitle: "学科id", mRender: function(v){
+
+				 { aTargets: [5], mDataProp: "score", sTitle: "成绩", mRender: function(v){
 						return v||'-';
 					}},
-				 { aTargets: [4], mDataProp: "orgId", sTitle: "班级id", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [5], mDataProp: "orgName", sTitle: "班级名称", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [6], mDataProp: "score", sTitle: "成绩", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [7], mDataProp: "createTime", sTitle: "创建时间", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [8], mDataProp: "createUser", sTitle: "创建人", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [9], mDataProp: "updateTime", sTitle: "修改时间", mRender: function(v){
-						return v||'-';
-					}},
-				 { aTargets: [10], mDataProp: "updateUser", sTitle: "创建人", mRender: function(v){
-						return v||'-';
-					}},
-				{ aTargets: [11], sClass: "opperColumn", sTitle: "操作", mData: function(data){
+				{ aTargets: [6], sClass: "opperColumn", sTitle: "操作", mData: function(data){
 					var buttons = [];
 					$.each(studentAchievementTable.permission,function(i,perm){
 						switch(perm){
@@ -143,6 +135,34 @@ $(function() {
 				});
 			}
 		});
+	//---------------------------------------左侧组织机构树------------------------------------------------
+	var organTree;
+	function fnTreeClick(event, treeId, treeNode){
+		$("#achOrgId").val(treeNode.id);
+		$("#searchBtn").trigger('click');
+	};
+	var treeSetting= {
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		callback: {
+			onClick: fnTreeClick,
+		}
+	};
+	function fnReloadTree(callback){
+		Svc.AjaxForm.get($("#organTreeUl").attr("data-url"),{},function(data){
+			data.splice(0, 0, {id: "allcontent",pId: 0, name: "全部", add: true });
+			try {
+				organTree.destroy();
+			} catch (e) {
+			}
+			organTree = $.fn.zTree.init($("#organTreeUl"), treeSetting, data);
+			callback && callback();
+		});
+	};
 	//---------------------------------------界面初始化------------------------------------------------
+	fnReloadTree();
 	studentAchievementSvc.fnRegisterEvent();
 });

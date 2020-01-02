@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/views">
+	<!-- 默认装饰页面, 在需要装饰的页面增加<meta name="decorator" content="default"/> -->
+	<decorator name="blank" page="layouts/blank.jsp" />
+	<decorator name="default" page="layouts/default.jsp" />
+	<decorator name="pagelist" page="layouts/pagelist.jsp" />
+	<decorator name="shopPagelist" page="layouts/shopPageList.jsp" />
+	<decorator name="pageform" page="layouts/pageform.jsp" />
+	<decorator name="pageprint" page="layouts/pageprint.jsp" />
+	<decorator name="stationPagelist" page="layouts/stationPagelist.jsp" />
+	<decorator name="ocsGroupPagelist" page="layouts/ocsGroupPagelist.jsp" />
+	
+	<!-- CMS基础主题装饰页面 -->
+	<decorator name="cms_default_basic" page="modules/cms/front/themes/basic/layouts/default.jsp" />
+	<decorator name="cms_default_weixin" page="modules/cms/front/themes/weixin/layouts/default.jsp" />
+	<!-- 微信前端基础主体装饰页面 无标点验证 -->
+	<decorator name="weixin" page="layouts/weixin.jsp" />
+</decorators>

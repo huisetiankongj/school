@@ -7,7 +7,8 @@
 		<div class="form-group normal-form">
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学生班级：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="stuOrgId" value="${student.stuOrgId}" placeholder="请输入学生班级" datatype="*" class="form-control input-text"/>
+				<sys:treeselect id="stuformorg" name="stuOrgId" value="${student.stuOrgId}" datatype="*" nullmsg="班级不能为空！" labelName="stuOrgName" labelValue="${student.stuOrgName}"
+								title="班级" url="/sys/org/treeData?type=2" cssClass="required" notAllowSelectParent="true"/>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
@@ -28,7 +29,14 @@
 		<div class="form-group normal-form">
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学生性别：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="stuSex" value="${student.stuSex}" placeholder="请输入学生性别" datatype="*" class="form-control input-text"/>
+				<div class="radio radio-inline">
+					<input id="radio1" type="radio" value="1" name="stuSex" <c:if test="${student.stuSex == 1 || student.stuSex == null }">checked="true"</c:if>>
+					<label for="radio1"> 男 </label>
+				</div>
+				<div class="radio radio-inline">
+					<input id="radio2" type="radio" value="2" name="stuSex" <c:if test="${student.stuSex == 2 }">checked="true"</c:if>>
+					<label for="radio2"> 女 </label>
+				</div>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>
@@ -36,38 +44,6 @@
 			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">学生年龄：</label>
 			<div class="col-xs-12 col-sm-7 pl-0">
 			    <input type="text" name="stuAge" value="${student.stuAge}" placeholder="请输入学生年龄" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">创建时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${student.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">修改时间：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${student.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">状态：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-			    <input type="text" name="state" value="${student.state}" placeholder="请输入状态" datatype="*" class="form-control input-text"/>
-			</div>
-			<div class="col-xs-12 col-sm-3 valid-msg"></div>
-		</div>
-		<div class="form-group normal-form">
-			<label class="col-xs-12 col-sm-2 control-label  pl-0 pr-5">备注：</label>
-			<div class="col-xs-12 col-sm-7 pl-0">
-		          <textarea class="form-control"  name="remarks" style="height:100px;">${student.remarks}</textarea>
 			</div>
 			<div class="col-xs-12 col-sm-3 valid-msg"></div>
 		</div>

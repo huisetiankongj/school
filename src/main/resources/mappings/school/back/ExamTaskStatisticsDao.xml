@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it313.elm.school.back.dao.ExamTaskStatisticsDao">
+    
+	<sql id="examTaskStatisticsColumns">
+		a.id AS "id",
+		a.task_id AS "taskId",
+		a.task_name AS "taskName",
+		a.exam_type AS "examType",
+		a.org_id AS "orgId",
+		a.org_name AS "orgName",
+		a.subject_id AS "subjectId",
+		a.subject_name AS "subjectName",
+		a.avg_score AS "avgScore",
+		a.bad_num AS "badNum",
+		a.bad_score as "badScore",
+		a.pass_num AS "passNum",
+		a.pass_score as "passScore",
+		a.excellent_num AS "excellentNum",
+		a.excellent_score as "excellentScore",
+		a.all_num AS "allNum",
+		a.min_score as "minScore",
+		a.max_score as "maxScore",
+		a.total_score as "totalScore",
+		a.create_time AS "createTime",
+		a.school_org_id as "schoolOrgId"
+	</sql>
+	
+	<sql id="examTaskStatisticsJoins">
+	</sql>
+    
+	<select id="get" resultType="com.it313.elm.school.back.entity.ExamTaskStatistics">
+		SELECT 
+			<include refid="examTaskStatisticsColumns"/>
+		FROM tb_exam_task_statistics a
+			<include refid="examTaskStatisticsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.it313.elm.school.back.entity.ExamTaskStatistics">
+		SELECT 
+			<include refid="examTaskStatisticsColumns"/>
+		FROM tb_exam_task_statistics a
+			<include refid="examTaskStatisticsJoins"/>
+		<where>
+			1=1
+			<if test="orgId != null and orgId!=''">
+				AND EXISTS (SELECT 1 FROM ${@com.it313.big.common.persistence.BaseEntity@BIG_COMMON_TP}.SYS_ORG B ,sys_org o WHERE o.LEFT_VALUE &gt;= B.LEFT_VALUE AND o.RIGHT_VALUE &lt;= B.RIGHT_VALUE AND B.ID=#{orgId}  and o.id = a.org_id)
+			</if>
+			<if test="beginTime != null">
+				AND a.create_time &gt;= #{beginTime}
+			</if>
+			<if test="endTime != null">
+				AND a.create_time &lt; #{endTime}
+			</if>
+			<if test="subjectId != null and subjectId!=''">
+				AND a.subject_id in (${subjectId})
+			</if>
+			<if test="taskId != null and taskId!=''">
+				AND a.task_id = #{taskId}
+			</if>
+			<if test="examType != null and examType!=''">
+				AND a.exam_type = #{examType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.it313.elm.school.back.entity.ExamTaskStatistics">
+		SELECT 
+			<include refid="examTaskStatisticsColumns"/>
+		FROM tb_exam_task_statistics a
+			<include refid="examTaskStatisticsJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tb_exam_task_statistics(
+			id,
+			task_id,
+			exam_type,
+			org_id,
+			subject_id,
+			subject_name,
+			avg_score,
+			bad_num,
+			pass_num,
+			excellent_num,
+			all_num,
+			create_time
+		) VALUES (
+			#{id},
+			#{taskId},
+			#{examType},
+			#{orgId},
+			#{subjectId},
+			#{subjectName},
+			#{avgScore},
+			#{badNum},
+			#{passNum},
+			#{excellentNum},
+			#{allNum},
+			#{createTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tb_exam_task_statistics 	
+			<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">	
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId},
+			</if>
+			<if test="examType != null and examType != ''">
+				exam_type = #{examType},
+			</if>
+			<if test="orgId != null and orgId != ''">
+				org_id = #{orgId},
+			</if>
+			<if test="subjectId != null and subjectId != ''">
+				subject_id = #{subjectId},
+			</if>
+			<if test="subjectName != null and subjectName != ''">
+				subject_name = #{subjectName},
+			</if>
+			<if test="avgScore != null and avgScore != ''">
+				avg_score = #{avgScore},
+			</if>
+			<if test="badNum != null and badNum != ''">
+				bad_num = #{badNum},
+			</if>
+			<if test="passNum != null and passNum != ''">
+				pass_num = #{passNum},
+			</if>
+			<if test="excellentNum != null and excellentNum != ''">
+				excellent_num = #{excellentNum},
+			</if>
+			<if test="allNum != null and allNum != ''">
+				all_num = #{allNum},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				create_time = #{createTime},
+			</if>
+			</trim>
+	</update>
+	
+	<update id="batchDelete">
+		DELETE FROM tb_exam_task_statistics
+		WHERE id in (
+		<foreach collection="list" item="item" index="index" separator="," >  
+	        #{item.id}
+	    </foreach>  
+	    )
+	</update>
+	<update id="saveByTaskId">
+		insert into
+		`tb_exam_task_statistics` (`id`, `task_id`, `task_name`, `exam_type`,
+		`org_id`, `org_name`, `subject_id`, `subject_name`,
+		`avg_score`, `bad_score`, `bad_num`, `pass_score`,
+		`pass_num`, `excellent_score`, `excellent_num`, `all_num`,`min_score`,`max_score`,`total_score`, `create_time`,school_org_id)
+		select MD5(UUID()),
+		k.task_id,k.task_name,tet.et_type,k.org_id,k.org_name,k.subject_id,k.subject_name,
+		k.avg_score,right(k.badStr,LENGTH(k.badStr)-LOCATE(':',k.badStr)) as bad_score,LEFT(k.badStr,LOCATE(':',k.badStr)-1) as bad_num ,
+		right(k.passStr,LENGTH(k.passStr)-LOCATE(':',k.passStr)) as pass_score ,LEFT(k.passStr,LOCATE(':',k.passStr)-1) as pass_num,
+		right(k.excellentStr,LENGTH(k.excellentStr)-LOCATE(':',k.excellentStr)) as excellent_score,LEFT(k.excellentStr,LOCATE(':',k.excellentStr)-1) as excellent_num,
+		k.all_num,k.min_score,k.max_score,k.total_score,now(),tet.school_org_id
+		from (select a.* ,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &lt; #{passcore}) as badStr,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &gt;= #{passcore}) as passStr,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &gt;= #{excellentScore}) as excellentStr
+		from (select task_id,task_name,subject_id,subject_name,org_id,org_name,count(1) as all_num,min(score) as min_score,max(score) as max_score,sum(score) as total_score,AVG(score) as avg_score
+		from tb_student_achievement where task_id = #{taskId} and subject_id = #{subjectId}
+		group by task_id,subject_id,org_id)a)k
+		inner join tb_exam_task tet on k.task_id = tet.id and tet.id = #{taskId}
+	</update>
+	<insert id="taskInsert2">
+		insert into
+		`tb_exam_task_statistics` (`id`, `task_id`, `task_name`, `exam_type`,
+		`org_id`, `org_name`, `subject_id`, `subject_name`,
+		`avg_score`, `bad_score`, `bad_num`, `pass_score`,
+		`pass_num`, `excellent_score`, `excellent_num`, `all_num`, `create_time`)
+		select MD5(UUID()),
+		k.task_id,k.task_name,tet.et_type,k.org_id,k.org_name,k.subject_id,k.subject_name,
+		k.avg_score,right(k.badStr,LENGTH(k.badStr)-LOCATE(':',k.badStr)) as bad_score,LEFT(k.badStr,LOCATE(':',k.badStr)-1) as bad_num ,
+		right(k.passStr,LENGTH(k.passStr)-LOCATE(':',k.passStr)) as pass_score ,LEFT(k.passStr,LOCATE(':',k.passStr)-1) as pass_num,
+		right(k.excellentStr,LENGTH(k.excellentStr)-LOCATE(':',k.excellentStr)) as excellent_score,LEFT(k.excellentStr,LOCATE(':',k.excellentStr)-1) as excellent_num,
+		k.all_num,now()
+		from (select a.* ,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &lt; #{passScore}) as badStr,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &gt;= #{passScore}) as passStr,
+		(select CONCAT(count(1),':',SUM(sa.score))  from tb_student_achievement sa where sa.subject_id= a.subject_id and sa.subject_id = a.subject_id and a.org_id = sa.org_id
+		and sa.score &gt;=#{excellentScore}) as excellentStr
+		from (select task_id,task_name,subject_id,subject_name,org_id,org_name,count(1) as all_num,AVG(score) as avg_score
+		from tb_student_achievement where create_time>(select IFNULL(MAX(create_time),'1990-01-01') from tb_exam_task_statistics)
+		group by task_id,subject_id,org_id)a)k
+		inner join tb_exam_task tet on k.task_id = tet.id and tet.id = #{taskId}
+	</insert>
+	<select id="findHVList" resultType="com.it313.elm.school.back.dto.ExamTaskStatisticsDto">
+		select * from (SELECT task_id ,task_name,exam_type,org_id,org_name,create_time
+		GROUP_CONCAT(subject_id,":",subject_name,":",all_num,":",avg_score,":",bad_num,":",bad_score,":",pass_num,":",pass_score,":",excellent_num,":",excellent_score) as remark
+		FROM tb_exam_task_statistics
+		GROUP BY task_id,org_id)t
+		order by t.create_time desc
+	</select>
+	<delete id="deleteByTaskId">
+		DELETE FROM tb_exam_task_statistics
+		WHERE task_id =#{taskId}
+	</delete>
+</mapper>
